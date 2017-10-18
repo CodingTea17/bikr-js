@@ -1,0 +1,18 @@
+.bg-secondary {
+  background-color: #f98524 !important;
+  border-color: #f98524 !important;
+}
+
+.bike-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.bike-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+#results {
+  display: none;
+}
