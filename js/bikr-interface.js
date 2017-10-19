@@ -1,42 +1,11 @@
-var black_bikes = 0;
-var red_bikes = 0;
-var yellow_bikes = 0;
-var blue_bikes = 0;
-var green_bikes = 0;
-var silver_bikes = 0;
-var orange_bikes = 0;
-var white_bikes = 0;
-var other_bikes = 0;
+import { Bikr } from './../js/bikr.js'
 
 google.charts.load("current", {packages:["corechart"]});
 
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Bike Color', '# of Bikes'],
-    ['Black', black_bikes],
-    ['Red', red_bikes],
-    ['Yellow or Gold', yellow_bikes],
-    ['Blue', blue_bikes],
-    ['Green', green_bikes],
-    ['Silver or Gray', silver_bikes],
-    ['Orange', orange_bikes],
-    ['White', white_bikes],
-    ['Other', other_bikes]
-  ]);
-
-  var options = {
-    title: 'Stolen Bike Colors',
-    is3D: true,
-    colors:['#010102', '#E50000', '#FFFF32', '#3838CC', '#328432', '#666666', '#FFAE19', '#E5E5E5', '#4C004C']
-  };
-
-  var chart = new google.visualization.PieChart(document.getElementById('stolen_bike_colors'));
-  chart.draw(data, options);
-}
-
-
-
 $(document).ready(() => {
+
+  let bike = new Bikr;
+
   $('#searchClick').click(() => {
     let make = $('#make').val();
     let model = $('#model').val();
@@ -97,55 +66,29 @@ $(document).ready(() => {
   });
 
   $("#clickGraph").click(() => {
-    let promise = new Promise((resolve, reject) => {
-      let request = new XMLHttpRequest();
-      let url = "https://bikeindex.org:443/api/v3/search?page=1&per_page=100&location=97205&distance=10&stolenness=proximity";
-      request.onload = () => {
-        if (request.status === 200) {
-          resolve(request.response);
-        } else {
-          reject(Error(request.statusText));
-        }
-      };
-      request.open("GET", url, true);
-      request.send();
-    });
+    bike.generateChart();
+    
+    let data = google.visualization.arrayToDataTable([
+      ['Bike Color', '# of Bikes'],
+      ['Black', bike.black_bikes],
+      ['Red', bike.red_bikes],
+      ['Yellow or Gold', bike.yellow_bikes],
+      ['Blue', bike.blue_bikes],
+      ['Green', bike.green_bikes],
+      ['Silver or Gray', bike.silver_bikes],
+      ['Orange', bike.orange_bikes],
+      ['White', bike.white_bikes],
+      ['Other', bike.other_bikes]
+    ]);
 
-    promise.then((response) => {
-      let data = JSON.parse(response);
-      data["bikes"].forEach((bike) => {
-        let bike_color = bike.frame_colors[0];
-        switch(bike_color) {
-          case "Black":
-            black_bikes += 1;
-            break;
-          case "Red":
-            red_bikes += 1;
-            break;
-          case "Yellow or Gold":
-            yellow_bikes += 1;
-            break;
-          case "Blue":
-            blue_bikes += 1;
-            break;
-          case "Green":
-            green_bikes += 1;
-            break;
-          case "Silver or Gray":
-            silver_bikes += 1;
-            break;
-          case "Orange":
-            orange_bikes += 1;
-            break;
-          case "White":
-            white_bikes += 1;
-            break;
-          default:
-            other_bikes += 1;        }
-      });
-      drawChart()
-    }, (error) => {
-      $('.showErrors').html(`There was an error processing your request: ${error.message}`);
-    });
+    let options = {
+      title: 'Stolen Bike Colors',
+      // is3D: true,
+      colors:['#010102', '#E50000', '#FFFF32', '#3838CC', '#328432', '#666666', '#FFAE19', '#E5E5E5', '#4C004C']
+
+      let chart = new google.visualization.PieChart($('#stolen_bike_colors'));
+
+      chart.draw(data, options);
+    };
   });
 });
