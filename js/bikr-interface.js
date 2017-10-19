@@ -1,47 +1,41 @@
-import { Bikr } from './../js/bikr.js'
+import { Bikr } from './../js/bikr.js';
 
 google.charts.load("current", {packages:["corechart"]});
 
 $(document).ready(() => {
 
-  let bike = new Bikr;
+  let bike = new Bikr();
 
   $('#searchClick').click(() => {
+    let make = $('#make').val();
+    let model = $('#model').val();
+    let year = $('#year').val();
+    let city = $('#city').val();
+
     $("#results").show();
     $('#returnBike').html("");
     $("#bikeSearch").hide();
 
+    // bike.craigslistBikes(make, model, year, city);
+    bike.generateList(make, model, year, city);
+  });
+
+  $('#craigslistClick').click(() => {
     let make = $('#make').val();
     let model = $('#model').val();
     let year = $('#year').val();
+    let city = $('#city').val();
 
-    bike.generateList(make, model, year);
+    // $("#results").show();
+    // $('#returnBike').html("");
+    $("#bikeSearch").hide();
+
+    bike.craigslistBikes(make, model, year, city);
+    // bike.generateList(make, model, year, city);
   });
 
   $("#clickGraph").click(() => {
     bike.generateData();
 
-    let data = google.visualization.arrayToDataTable([
-      ['Bike Color', '# of Bikes'],
-      ['Black', bike.black_bikes],
-      ['Red', bike.red_bikes],
-      ['Yellow or Gold', bike.yellow_bikes],
-      ['Blue', bike.blue_bikes],
-      ['Green', bike.green_bikes],
-      ['Silver or Gray', bike.silver_bikes],
-      ['Orange', bike.orange_bikes],
-      ['White', bike.white_bikes],
-      ['Other', bike.other_bikes]
-    ]);
-
-    let options = {
-      title: 'Stolen Bike Colors',
-      // is3D: true,
-      colors:['#010102', '#E50000', '#FFFF32', '#3838CC', '#328432', '#666666', '#FFAE19', '#E5E5E5', '#4C004C']
-
-      let chart = new google.visualization.PieChart($('#stolen_bike_colors'));
-
-      chart.draw(data, options);
-    };
   });
 });
